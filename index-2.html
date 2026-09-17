@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Femme et Vaccination — CVI Toulouse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --teal-900:#0F3D36;
+  --teal-700:#12564C;
+  --teal-500:#1C7C6D;
+  --rose-500:#D97B68;
+  --rose-100:#F6DED6;
+  --paper:#FAF6F0;
+  --paper-2:#F0EAE0;
+  --ink:#1C2624;
+  --ink-soft:#4A5652;
+  --line:#DCD3C4;
+  --bg: var(--paper);
+  --bg-card:#FFFFFF;
+  --text: var(--ink);
+  --text-soft: var(--ink-soft);
+  --border: var(--line);
+  --accent: var(--rose-500);
+  --accent-soft: var(--rose-100);
+  --brand: var(--teal-700);
+  --brand-strong: var(--teal-900);
+  --ok:#2E7D4F;
+  --ko:#B4483A;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12201D;
+    --bg-card:#182B27;
+    --text:#EDEDE8;
+    --text-soft:#B7C4C0;
+    --border:#2A413B;
+    --accent:#E39A87;
+    --accent-soft:#2C2320;
+    --brand:#3FA491;
+    --brand-strong:#7FD1BF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12201D;
+  --bg-card:#182B27;
+  --text:#EDEDE8;
+  --text-soft:#B7C4C0;
+  --border:#2A413B;
+  --accent:#E39A87;
+  --accent-soft:#2C2320;
+  --brand:#3FA491;
+  --brand-strong:#7FD1BF;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter', system-ui, -apple-system, sans-serif;
+  line-height:1.5;
+  min-height:100vh;
+}
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:28px 20px 60px;
+}
+.eyebrow{
+  font-family:'Fraunces', Georgia, serif;
+  font-size:14px;
+  color:var(--brand);
+  letter-spacing:0.02em;
+  margin:0 0 6px;
+}
+h1{
+  font-family:'Fraunces', Georgia, serif;
+  font-weight:600;
+  font-size:clamp(26px,6vw,34px);
+  color:var(--brand-strong);
+  margin:0 0 14px;
+  line-height:1.15;
+}
+h2{
+  font-family:'Fraunces', Georgia, serif;
+  font-weight:600;
+  font-size:20px;
+  color:var(--brand-strong);
+  margin:0 0 10px;
+}
+p{color:var(--text);}
+.muted{color:var(--text-soft); font-size:15px;}
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:16px;
+}
+.progress{
+  height:6px;
+  background:var(--border);
+  border-radius:99px;
+  overflow:hidden;
+  margin-bottom:22px;
+}
+.progress-fill{
+  height:100%;
+  background:var(--accent);
+  transition:width .3s ease;
+}
+.category-tag{
+  display:inline-block;
+  font-size:13px;
+  color:var(--brand);
+  background:var(--accent-soft);
+  border-radius:99px;
+  padding:4px 12px;
+  margin-bottom:12px;
+  font-weight:600;
+}
+.q-text{
+  font-size:18px;
+  font-weight:600;
+  margin:0 0 16px;
+  color:var(--text);
+}
+.options{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.opt{
+  text-align:left;
+  padding:13px 16px;
+  border-radius:10px;
+  border:1.5px solid var(--border);
+  background:transparent;
+  color:var(--text);
+  font-family:inherit;
+  font-size:15.5px;
+  cursor:pointer;
+  transition:border-color .15s, background .15s;
+}
+.opt:hover{border-color:var(--brand);}
+.opt.selected{border-color:var(--brand); background:var(--accent-soft);}
+.opt.correct{border-color:var(--ok); background:rgba(46,125,79,0.12);}
+.opt.incorrect{border-color:var(--ko); background:rgba(180,72,58,0.12);}
+.opt:disabled{cursor:default;}
+.explain{
+  margin-top:16px;
+  padding:14px 16px;
+  border-left:3px solid var(--brand);
+  background:var(--paper-2);
+  border-radius:0 8px 8px 0;
+  font-size:14.5px;
+  color:var(--text-soft);
+}
+:root[data-theme="dark"] .explain, @media (prefers-color-scheme: dark){ .explain{ background:rgba(255,255,255,0.04); } }
+.btn{
+  display:inline-block;
+  padding:13px 26px;
+  border-radius:10px;
+  border:none;
+  background:var(--brand);
+  color:#fff;
+  font-family:inherit;
+  font-weight:600;
+  font-size:15.5px;
+  cursor:pointer;
+  transition:background .15s;
+}
+.btn:hover{background:var(--brand-strong);}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+.btn-ghost{
+  background:transparent;
+  color:var(--brand);
+  border:1.5px solid var(--brand);
+}
+.btn-ghost:hover{background:var(--accent-soft);}
+.row{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:20px;}
+select, input[type=text]{
+  width:100%;
+  padding:11px 12px;
+  border-radius:8px;
+  border:1.5px solid var(--border);
+  background:var(--bg-card);
+  color:var(--text);
+  font-family:inherit;
+  font-size:15px;
+  margin-bottom:14px;
+}
+label.field-label{
+  display:block;
+  font-weight:600;
+  font-size:14.5px;
+  margin-bottom:6px;
+  color:var(--text);
+}
+.intro-quote{
+  font-style:italic;
+  color:var(--text-soft);
+  border-left:3px solid var(--accent);
+  padding:10px 16px;
+  margin:16px 0;
+  font-size:15px;
+}
+.footer-note{
+  text-align:center;
+  color:var(--text-soft);
+  font-size:12.5px;
+  margin-top:30px;
+}
+.hidden{display:none !important;}
+.fade-in{animation: fadeIn .28s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+.opt{min-height:48px;}
+.btn{min-height:48px;}
+.score-big{
+  font-family:'Fraunces', Georgia, serif;
+  font-size:48px;
+  color:var(--brand-strong);
+  text-align:center;
+  margin:6px 0;
+}
+.center{text-align:center;}
+#qrcode{display:flex; justify-content:center; margin:18px 0;}
+#qrcode img, #qrcode canvas{border-radius:8px;}
+.poster{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:40px 24px;
+}
+.poster h1{font-size:clamp(28px,5vw,44px); max-width:600px;}
+@media print{
+  .no-print{display:none !important;}
+  body{background:#fff;}
+}
+</style>
+</head>
+<body>
+
+<div id="app" class="wrap"></div>
+
+<script>
+/* ---------- Contenu du quiz (issu de la trame fournie) ---------- */
+
+const INTRO_TEXT = "Ce questionnaire est anonyme et nous permet de recueillir des informations sur l'état des connaissances autour de la vaccination chez les femmes, dans le cadre de la journée de la santé axée sur la santé des femmes.\n\nN'hésitez pas à poser vos questions aux personnes qui vous présentent ce quiz en cas de doute.";
+
+const DEMO_INTRO_TEXT = "Ce questionnaire est anonyme, nous ne vous demanderons jamais d'informations personnelles, mais nous souhaitons avoir une idée du profil des personnes répondant à ce questionnaire. Voici quelques questions préalables :";
+
+const QUESTIONS = [
+  {
+    id: 1,
+    category: "Vaccin tétanos – poliomyélite – diphtérie – coqueluche",
+    text: "Concernant le vaccin contre diphtérie-tétanos-poliomyélite-coqueluche chez la femme adulte, à quelle fréquence les rappels sont-ils recommandés en dehors de toute grossesse ?",
+    options: [
+      "Tous les 5 ans",
+      "Tous les 20 ans sans distinction d'âge",
+      "À 25 ans, 45 ans et 65 ans, puis tous les 10 ans à partir de 65 ans",
+      "Un seul rappel à 25 ans suffit pour la vie entière"
+    ],
+    correct: 2,
+    explanation: "Le calendrier vaccinal français prévoit des rappels dTP-coqueluche à 25 ans, 45 ans et 65 ans, puis tous les 10 ans au-delà de 65 ans."
+  },
+  {
+    id: 2,
+    category: "Femmes et HPV",
+    intro: "6 400 nouveaux cas de cancer liés aux HPV sont diagnostiqués chaque année, dont un quart chez les hommes et trois quarts chez les femmes. 90 % des cancers du col de l'utérus et de l'anus sont évitables par la vaccination contre le papillomavirus.",
+    text: "Jusqu'à quel âge le vaccin contre les papillomavirus humains (HPV) est-il recommandé en France pour les jeunes femmes non encore vaccinées ?",
+    options: [
+      "Jusqu'à 19 ans révolus",
+      "Jusqu'à 23 ans révolus",
+      "Jusqu'à 26 ans révolus",
+      "Il n'y a pas de limite d'âge pour les femmes"
+    ],
+    correct: 2,
+    explanation: "La vaccination est recommandée dès l'âge de 11 ans et peut être réalisée jusqu'à 26 ans chez les filles et les garçons. Elle ne dispense pas du dépistage du col de l'utérus tous les 3 ans de 25 à 30 ans, puis tous les 5 ans de 30 à 65 ans."
+  },
+  {
+    id: 3,
+    category: "Avant une grossesse",
+    text: "Est-il nécessaire de recevoir des vaccins avant une grossesse ?",
+    options: ["Oui", "Non"],
+    correct: 0,
+    explanation: "Avant tout projet de grossesse, il est important de vérifier que la femme est bien protégée par la vaccination contre certaines maladies pouvant avoir des conséquences graves pendant la grossesse."
+  },
+  {
+    id: 4,
+    category: "Avant une grossesse",
+    text: "Une femme de 28 ans n'a jamais contracté la varicelle et n'a jamais été vaccinée contre cette maladie. Quelle est la recommandation ?",
+    options: [
+      "La vaccination n'est pas nécessaire car la varicelle est bénigne chez l'adulte",
+      "Si elle n'a jamais eu la varicelle, cette femme doit être vaccinée avant de tomber enceinte, car le vaccin ne peut pas être réalisé au cours de la grossesse",
+      "La vaccination est possible pendant la grossesse",
+      "La sérologie n'est pas recommandée avant 35 ans"
+    ],
+    correct: 1,
+    explanation: "Le vaccin contre la varicelle est un vaccin vivant : il est contre-indiqué pendant la grossesse et doit donc être fait en amont si la femme n'est pas immunisée."
+  },
+  {
+    id: 5,
+    category: "Avant une grossesse",
+    text: "Pourquoi la vaccination contre la rubéole est-elle particulièrement importante avant un projet de grossesse ?",
+    options: [
+      "Pour prévenir les formes graves de rubéole chez la femme adulte",
+      "Pour éviter la rubéole congénitale, responsable de malformations graves chez le fœtus",
+      "Car la rubéole est redevenue épidémique en France depuis 2024",
+      "Parce que le vaccin ROR est remboursé uniquement avant 18 ans"
+    ],
+    correct: 1,
+    explanation: "La rubéole contractée pendant la grossesse est la 1ère cause de malformation congénitale d'origine infectieuse. Le vaccin ROR (rougeole-oreillons-rubéole) est un vaccin vivant, à réaliser avant la grossesse."
+  },
+  {
+    id: 6,
+    category: "Pendant une grossesse",
+    text: "Quelle est la recommandation 2026 concernant la vaccination contre la COVID-19 chez la femme enceinte ?",
+    options: [
+      "Elle est déconseillée pendant toute la grossesse",
+      "Elle est recommandée, en privilégiant les vaccins à ARNm adaptés aux variants en circulation",
+      "Elle est uniquement recommandée au 1er trimestre",
+      "Elle n'est recommandée que pour les femmes avec comorbidités"
+    ],
+    correct: 1,
+    explanation: "La vaccination contre la COVID-19 est recommandée dès le premier trimestre de grossesse, avec les vaccins à ARNm adaptés aux variants circulants."
+  },
+  {
+    id: 7,
+    category: "Pendant une grossesse",
+    text: "Quels vaccins sont à réaliser systématiquement au cours d'une grossesse, même si la femme est à jour de tous ses vaccins du calendrier français ?",
+    options: [
+      "La vaccination contre la grippe / la Covid-19 (ARNm) / la coqueluche / le VRS",
+      "Aucune",
+      "La vaccination contre la coqueluche seulement",
+      "La vaccination contre la rougeole / la toxoplasmose / la coqueluche"
+    ],
+    correct: 0,
+    explanation: "Grippe (tout trimestre), Covid-19 (dès le 1er trimestre), coqueluche (à partir du 2e trimestre, idéalement entre 20 et 36 SA) et VRS (Abrysvo, 32-36 SA) sont recommandés à chaque grossesse, y compris chez les femmes déjà vaccinées auparavant."
+  },
+  {
+    id: 8,
+    category: "Pendant une grossesse",
+    text: "Parmi les vaccins suivants, lequel est formellement contre-indiqué pendant la grossesse ?",
+    options: [
+      "Le vaccin contre l'hépatite A",
+      "Le vaccin contre la grippe",
+      "Le vaccin ROR (rougeole-oreillons-rubéole)",
+      "Le vaccin contre la coqueluche (dTCaP)"
+    ],
+    correct: 2,
+    explanation: "Les vaccins vivants ou vivants atténués (ROR, varicelle) sont formellement contre-indiqués pendant la grossesse en raison d'un risque d'infection du fœtus. Une grossesse doit être évitée dans le mois suivant ce type de vaccination."
+  },
+  {
+    id: 9,
+    category: "Après une grossesse",
+    text: "En post-partum immédiat, quelle stratégie est recommandée pour une mère non protégée par la vaccination contre la rubéole et/ou la varicelle ?",
+    options: [
+      "La vaccination est reportée à 3 mois après l'accouchement",
+      "La vaccination ROR et/ou varicelle peut être réalisée dès le post-partum, y compris en cas d'allaitement",
+      "La vaccination est contre-indiquée en cas d'allaitement",
+      "La vaccination n'est recommandée que si une nouvelle grossesse est envisagée dans l'année"
+    ],
+    correct: 1,
+    explanation: "Le post-partum immédiat est le bon moment pour rattraper ces vaccins vivants chez une mère non immunisée : l'allaitement n'est pas une contre-indication."
+  },
+  {
+    id: 10,
+    category: "Après une grossesse",
+    text: "Quel vaccin est recommandé en France chez la femme enceinte pour protéger le nourrisson contre le VRS (virus responsable des bronchiolites) ?",
+    options: [
+      "Le vaccin Arexvy®, administré au 1er trimestre",
+      "Le vaccin Abrysvo® (Pfizer), administré entre la 32e et la 36e SA pendant la saison épidémique",
+      "Le vaccin Beyfortus®, administré à la mère au 2e trimestre",
+      "Il n'existe pas de vaccin recommandé chez la femme enceinte contre le VRS en France"
+    ],
+    correct: 1,
+    explanation: "Vacciner la mère avec Abrysvo® entre 32 et 36 SA, pendant la saison épidémique, permet à l'enfant de disposer d'anticorps protecteurs dès la naissance et jusqu'à 6 mois."
+  }
+];
+
+const Q11 = {
+  id: 11,
+  category: "Femmes de plus de 65 ans",
+  text: "Que savez-vous au sujet des vaccins chez les personnes âgées ?",
+  options: [
+    "Je n'ai aucune information",
+    "Je ne pense pas qu'il y ait besoin de faire des vaccins supplémentaires chez les personnes âgées",
+    "Je sais qu'il faut vacciner les personnes de plus de 65 ans mais je ne sais pas exactement lesquels",
+    "Je sais qu'il faut se faire vacciner au-delà de 65 ans par des vaccins particuliers"
+  ]
+};
+
+const BONUS_QUESTIONS = [
+  {
+    id: "b1",
+    category: "Femmes de plus de 65 ans — pour aller plus loin",
+    text: "Vrai ou faux : il n'y a pas plus de risque lorsque l'on contracte la grippe ou la Covid-19, que l'on ait 20 ou 70 ans.",
+    options: ["Vrai", "Faux"],
+    correct: 1,
+    explanation: "La vaccination contre la grippe et la Covid-19 est recommandée chaque automne à toutes les personnes de 65 ans et plus, dont le risque de forme grave augmente avec l'âge."
+  },
+  {
+    id: "b2",
+    category: "Femmes de plus de 65 ans — pour aller plus loin",
+    text: "Vrai ou faux : un rappel contre le tétanos doit être réalisé à l'âge de 65 ans, puis à 75 ans (tous les 10 ans).",
+    options: ["Vrai", "Faux"],
+    correct: 0,
+    explanation: "Diphtérie – tétanos – poliomyélite : rappel à 65 ans, puis tous les 10 ans (75, 85 ans...)."
+  },
+  {
+    id: "b3",
+    category: "Femmes de plus de 65 ans — pour aller plus loin",
+    text: "Vrai ou faux : en dehors de la vaccination contre la grippe et la Covid-19, recommandée chaque année, il n'y a pas d'autre vaccin particulier à réaliser chez les personnes âgées.",
+    options: ["Vrai", "Faux"],
+    correct: 1,
+    explanation: "Le pneumocoque et le zona sont recommandés à partir de 65 ans, et la vaccination contre le VRS à partir de 75 ans (ou 65 ans en cas de pathologie respiratoire ou cardiaque chronique)."
+  }
+];
+
+/* ---------- Config : à compléter après déploiement ---------- */
+// Colle ici l'URL de ton Web App Google Apps Script (voir Code.gs fourni séparément).
+const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbyBcSazxALWDjhDiBKiYuwf7WbtCWPpmKAgt6ACgkt28webi3t6Wp4B7Mspwy9HSToh/exec";
+
+/* ---------- État ---------- */
+let state = {
+  screen: "intro",
+  demo: {},
+  answers: {},   // {questionId: {choice, correct}}
+  shuffles: {},  // {questionId: [ordre mélangé des index d'options]}
+  qIndex: 0,
+  bonusIndex: 0,
+  showBonus: false
+};
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getOrder(q){
+  if (!state.shuffles[q.id]){
+    state.shuffles[q.id] = shuffleArray(q.options.map((_, i) => i));
+  }
+  return state.shuffles[q.id];
+}
+
+function fullList(){
+  return QUESTIONS.concat([Q11]);
+}
+
+const app = document.getElementById("app");
+
+function render(){
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (state.screen === "poster") renderPoster();
+  else if (state.screen === "intro") renderIntro();
+  else if (state.screen === "demo") renderDemo();
+  else if (state.screen === "quiz") renderQuiz();
+  else if (state.screen === "bonus") renderBonus();
+  else if (state.screen === "results") renderResults();
+  app.classList.remove("fade-in");
+  void app.offsetWidth; // force le redémarrage de l'animation
+  app.classList.add("fade-in");
+}
+
+function progressBar(current, total){
+  return `<div class="progress"><div class="progress-fill" style="width:${(current/total)*100}%"></div></div>`;
+}
+
+function renderIntro(){
+  app.innerHTML = `
+    <p class="eyebrow">Journée de la santé — Santé des femmes</p>
+    <h1>Femme et vaccination</h1>
+    <div class="card">
+      <p>${INTRO_TEXT.replace(/\n\n/g,'</p><p>')}</p>
+    </div>
+    <button class="btn" id="start">Commencer le quiz</button>
+    <p class="footer-note">Centre de Vaccination Internationale — Toulouse · 23 septembre · Jardin du Grand Rond</p>
+  `;
+  document.getElementById("start").onclick = () => { state.screen = "demo"; render(); };
+}
+
+function renderDemo(){
+  const d = state.demo;
+  app.innerHTML = `
+    <h2>Votre profil</h2>
+    <div class="card">
+      <p class="muted">${DEMO_INTRO_TEXT}</p>
+
+      <label class="field-label">Tranche d'âge</label>
+      <select id="age">
+        <option value="">Choisir...</option>
+        <option>18-25</option><option>26-35</option><option>36-45</option><option>46-55</option><option>56 et +</option>
+      </select>
+
+      <label class="field-label">Genre</label>
+      <select id="genre">
+        <option value="">Choisir...</option>
+        <option>Femme</option><option>Homme</option><option>Autre</option>
+      </select>
+
+      <label class="field-label">Profession</label>
+      <select id="profession">
+        <option value="">Choisir...</option>
+        <option>Cadre</option><option>Salarié(e)</option><option>Profession libérale</option><option>Étudiant(e)</option><option>Retraité(e)</option>
+      </select>
+
+      <label class="field-label">Niveau d'études</label>
+      <select id="etudes">
+        <option value="">Choisir...</option>
+        <option>Brevet</option><option>Baccalauréat</option><option>Bac + 2</option><option>Bac + 3</option><option>Bac + 5</option><option>&gt; Bac + 5</option>
+      </select>
+
+      <label class="field-label">Exercez-vous dans le milieu médical ou paramédical ?</label>
+      <select id="medical">
+        <option value="">Choisir...</option>
+        <option>Oui</option><option>Non</option>
+      </select>
+
+      <label class="field-label">Êtes-vous actuellement enceinte ?</label>
+      <select id="enceinte">
+        <option value="">Choisir...</option>
+        <option>Oui</option><option>Non</option><option>Non concerné(e)</option>
+      </select>
+    </div>
+    <button class="btn" id="next">Continuer</button>
+  `;
+  ["age","genre","profession","etudes","medical","enceinte"].forEach(k=>{
+    document.getElementById(k).value = d[k] || "";
+  });
+  document.getElementById("next").onclick = () => {
+    ["age","genre","profession","etudes","medical","enceinte"].forEach(k=>{
+      d[k] = document.getElementById(k).value;
+    });
+    state.screen = "quiz";
+    state.qIndex = 0;
+    render();
+  };
+}
+
+function renderQuestionCard(q, onAnswered, indexLabel, total){
+  const already = state.answers[q.id];
+  const order = getOrder(q); // ordre mélangé des index d'options, stable pour cette question/session
+
+  app.innerHTML = `
+    ${progressBar(indexLabel, total)}
+    <div class="category-tag">${q.category}</div>
+    ${q.intro ? `<div class="intro-quote">${q.intro}</div>` : ""}
+    <div class="card">
+      <p class="q-text">${q.text}</p>
+      <div class="options" id="opts">
+        ${order.map((origIndex)=>`<button class="opt" data-orig="${origIndex}">${q.options[origIndex]}</button>`).join("")}
+      </div>
+      <div id="explainWrap"></div>
+    </div>
+    <div class="row">
+      <span></span>
+      <button class="btn" id="nextBtn" disabled>Suivant</button>
+    </div>
+  `;
+  const buttons = [...document.querySelectorAll(".opt")];
+  const nextBtn = document.getElementById("nextBtn");
+
+  function lockIn(origChoice){
+    const isScored = typeof q.correct === "number";
+    state.answers[q.id] = { choice: origChoice, correct: isScored ? origChoice === q.correct : null };
+    buttons.forEach((b)=>{
+      const orig = parseInt(b.dataset.orig);
+      b.disabled = true;
+      if (isScored){
+        if (orig === q.correct) b.classList.add("correct");
+        else if (orig === origChoice) b.classList.add("incorrect");
+      } else if (orig === origChoice){
+        b.classList.add("selected");
+      }
+    });
+    if (q.explanation){
+      document.getElementById("explainWrap").innerHTML = `<div class="explain">${q.explanation}</div>`;
+    }
+    nextBtn.disabled = false;
+  }
+
+  if (already){
+    lockIn(already.choice);
+  }
+
+  buttons.forEach(b=>{
+    b.onclick = () => lockIn(parseInt(b.dataset.orig));
+  });
+  nextBtn.onclick = onAnswered;
+}
+
+function renderQuiz(){
+  const list = fullList();
+  const q = list[state.qIndex];
+  renderQuestionCard(q, () => {
+    if (state.qIndex < list.length - 1){
+      state.qIndex++;
+    } else {
+      // Décider si on propose les questions bonus (>= 56 ans)
+      state.showBonus = state.demo.age === "56 et +";
+      state.screen = state.showBonus ? "bonus" : "results";
+      state.bonusIndex = 0;
+    }
+    render();
+  }, state.qIndex + 1, list.length);
+}
+
+function renderBonus(){
+  const q = BONUS_QUESTIONS[state.bonusIndex];
+  app.innerHTML = "";
+  const header = document.createElement("div");
+  header.innerHTML = `<h2>Pour aller plus loin</h2><p class="muted">Puisque vous avez 56 ans ou plus, voici trois questions complémentaires (facultatives).</p>`;
+  app.appendChild(header);
+  renderQuestionCard(q, () => {
+    if (state.bonusIndex < BONUS_QUESTIONS.length - 1){
+      state.bonusIndex++;
+      render();
+    } else {
+      state.screen = "results";
+      render();
+    }
+  }, state.bonusIndex + 1, BONUS_QUESTIONS.length);
+  app.insertBefore(header, app.firstChild);
+}
+
+function computeScore(){
+  const scored = QUESTIONS.concat(state.showBonus ? BONUS_QUESTIONS : []);
+  let correct = 0;
+  scored.forEach(q => { if (state.answers[q.id] && state.answers[q.id].correct) correct++; });
+  return { correct, total: scored.length };
+}
+
+async function submitToSheet(payload){
+  if (!SHEET_ENDPOINT || SHEET_ENDPOINT.indexOf("COLLER_ICI") !== -1) return;
+  try {
+    await fetch(SHEET_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    // Échec silencieux : on garde une copie locale ci-dessous.
+    console.error("Envoi Google Sheet impossible :", e);
+  }
+}
+
+function renderResults(){
+  const { correct, total } = computeScore();
+  const payload = {
+    date: new Date().toISOString(),
+    demo: state.demo,
+    score: `${correct}/${total}`,
+    reponses: state.answers
+  };
+
+  try {
+    const key = "quiz_femme_vaccination_reponses";
+    const prev = JSON.parse(localStorage.getItem(key) || "[]");
+    prev.push(payload);
+    localStorage.setItem(key, JSON.stringify(prev));
+  } catch(e){ /* stockage local indisponible, on continue */ }
+
+  submitToSheet(payload);
+
+  app.innerHTML = `
+    <h1>Merci d'avoir participé !</h1>
+    <div class="card center">
+      <p class="muted">Votre score</p>
+      <div class="score-big">${correct} / ${total}</div>
+      <p class="muted">Rendez-vous au stand du CVI pour toute question sur votre vaccination.</p>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="btn btn-ghost" id="restart">Recommencer</button>
+    </div>
+    <p class="footer-note">Centre de Vaccination Internationale — Mairie de Toulouse</p>
+  `;
+  document.getElementById("restart").onclick = () => {
+    state = { screen: "intro", demo: {}, answers: {}, shuffles: {}, qIndex: 0, bonusIndex: 0, showBonus:false };
+    render();
+  };
+}
+
+/* ---------- Mode affiche / QR code ---------- */
+/* Ouvrir la page avec ?poster=1 pour générer l'affiche à imprimer avec le QR code. */
+function renderPoster(){
+  const url = location.origin + location.pathname;
+  app.innerHTML = `
+    <div class="poster">
+      <p class="eyebrow">23 septembre — Jardin du Grand Rond, Toulouse</p>
+      <h1>Femme et vaccination<br>Testez vos connaissances</h1>
+      <div id="qrcode"></div>
+      <p class="muted">Scannez ce QR code pour répondre au quiz</p>
+      <div class="row no-print" style="justify-content:center; gap:12px;">
+        <button class="btn" id="downloadQr">Télécharger le QR (PNG)</button>
+        <button class="btn btn-ghost" id="print">Imprimer l'affiche</button>
+      </div>
+      <p class="muted no-print" style="margin-top:14px; font-size:13px;">Lien encodé : ${url}</p>
+    </div>
+  `;
+  new QRCode(document.getElementById("qrcode"), {
+    text: url,
+    width: 220,
+    height: 220,
+    colorDark: "#0F3D36",
+    colorLight: "#ffffff"
+  });
+  document.getElementById("print").onclick = () => window.print();
+  document.getElementById("downloadQr").onclick = () => {
+    const canvas = document.querySelector("#qrcode canvas");
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "qr-quiz-femme-vaccination.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+}
+
+/* ---------- Démarrage ---------- */
+const params = new URLSearchParams(location.search);
+if (params.get("poster") === "1"){
+  state.screen = "poster";
+}
+render();
+</script>
+</body>
+</html>
